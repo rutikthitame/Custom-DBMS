@@ -164,7 +164,7 @@ public class DBHelper
         // SelectSpecific 
         source2.append("    public void SelectSpecific(String column, String value) \n{\n")
               .append("        boolean found = false;\n")
-              .append("        System.out.println(\"--------------------------------------------------------\")")  
+              .append("        System.out.println(\"--------------------------------------------------------\");")  
               .append("        for(").append(className).append(" obj : list) \n{\n")
               .append("            try \n{\n")
               .append("                java.lang.reflect.Field field = obj.getClass().getDeclaredField(column);\n")
@@ -183,7 +183,7 @@ public class DBHelper
               .append("                }\n")
               .append("            } catch(Exception e) \n{ e.printStackTrace(); }\n")
               .append("        }\n")
-              .append("        System.out.println(\"--------------------------------------------------------\")")
+              .append("        System.out.println(\"--------------------------------------------------------\");")
               .append("        if(!found) System.out.println(\"No such record\");\n")
               .append("    }\n");
 
@@ -219,12 +219,13 @@ public class DBHelper
             .append("        for(").append(className).append(" obj : list) \n{\n")
             .append("            boolean matches = true;\n")
             .append("            try {\n")
-            .append("                // Check all conditions\n")
             .append("                for(String cond : conditions) {\n")
-            .append("                    String[] condArray = cond.split(\" \");\n")
-            .append("                    String fieldName = condArray[0];\n")
-            .append("                    String operator = condArray[1];\n")
-            .append("                    String condValue = condArray[2];\n")
+            .append("                    if(cond == null || cond.trim().isEmpty()) continue;\n")
+            .append("                    String[] condArray = cond.trim().split(\" \");\n")
+            .append("                    if(condArray.length < 3) continue;\n")
+            .append("                    String fieldName = condArray[0].trim();\n")
+            .append("                    String operator = condArray[1].trim();\n")
+            .append("                    String condValue = condArray[2].trim();\n")
             .append("                    java.lang.reflect.Field field = obj.getClass().getDeclaredField(fieldName);\n")
             .append("                    field.setAccessible(true);\n")
             .append("                    Object fieldValue = field.get(obj);\n")
@@ -235,17 +236,21 @@ public class DBHelper
             .append("                            case \"<\": matches &= (fVal < cVal); break;\n")
             .append("                            case \">\": matches &= (fVal > cVal); break;\n")
             .append("                            case \"=\": matches &= (fVal == cVal); break;\n")
+            .append("                            default: matches = false;\n")
             .append("                        }\n")
             .append("                    } else {\n")
-            .append("                        matches &= fieldValue.toString().equals(condValue);\n")
+            .append("                        matches &= fieldValue.toString().trim().equalsIgnoreCase(condValue.trim());\n")
             .append("                    }\n")
             .append("                }\n")
             .append("                if(matches) {\n")
             .append("                    found = true;\n")
             .append("                    for(String param : params) {\n")
+            .append("                        if(param == null || param.trim().isEmpty()) continue;\n")
             .append("                        String[] paramArray = param.split(\"=\");\n")
+            .append("                        if(paramArray.length < 2) continue;\n")
             .append("                        String fieldName = paramArray[0].trim();\n")
             .append("                        String newValue = paramArray[1].trim();\n")
+            .append("                        if(fieldName.equalsIgnoreCase(\"id\")) continue; // skip ID updates\n")
             .append("                        java.lang.reflect.Field field = obj.getClass().getDeclaredField(fieldName);\n")
             .append("                        field.setAccessible(true);\n")
             .append("                        if(field.getType() == int.class) {\n")
@@ -253,7 +258,7 @@ public class DBHelper
             .append("                        } else if(field.getType() == double.class) {\n")
             .append("                            field.setDouble(obj, Double.parseDouble(newValue));\n")
             .append("                        } else {\n")
-            .append("                            field.set(obj, newValue);\n")
+            .append("                            field.set(obj, newValue.trim());\n")
             .append("                        }\n")
             .append("                    }\n")
             .append("                }\n")
@@ -263,7 +268,6 @@ public class DBHelper
             .append("        else System.out.println(\"Update complete.\");\n")
             .append("    }\n");
 
-                          
 
         // Close DB class
         source2.append("}\n");

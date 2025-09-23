@@ -62,11 +62,11 @@ public class CustomDBMSmain
                     command = Choice.split(" ");
                     try
                     {
-                        if(command.length <= 3 && command[0].equalsIgnoreCase("create") && command[1].equalsIgnoreCase("table"))
+                        if(command.length >= 3 && command[0].equalsIgnoreCase("create") && command[1].equalsIgnoreCase("table"))
                         {
                             String tableName = command[2];
                             String colArray[] = Arrays.copyOfRange(command,4,command.length);
-                            for(int i = 0; i < colArray.length-1; i += 2)
+                            for(int i = 0; i < colArray.length; i += 3)
                             {
                                 columns.add(colArray[i]+" "+colArray[i+1]);
                             }
@@ -131,37 +131,68 @@ public class CustomDBMSmain
                                 tableClass.getMethod("TakeBackup").invoke(tableobj);
                             }
                         }
-                        else if(command.length >= 8 && command[0].equalsIgnoreCase("update") && command[2].equalsIgnoreCase("set"))
+                        else if(command.length >= 4 && command[0].equalsIgnoreCase("update") && command[2].equalsIgnoreCase("set"))
                         {
-                            String params[] = null;
-                            String conditions[] = null;
+                            ArrayList<String> params = new ArrayList<>();
+                            ArrayList<String> conditions = new ArrayList<>();
+                        
                             int i = 3;
-                            int j = 0;
-                            while(command[i] != "where")
+                        
+                            StringBuilder sb = new StringBuilder();
+                            while(i < command.length && !command[i].equalsIgnoreCase("where")) 
                             {
-                                params[j] = command[i]+command[i+1]+command[i+2];
-                                i+=4;
-                                j++;
+                                sb.append(command[i]).append(" ");
+                                i++;
                             }
-                            j = 0;
-                            while(i != command.length-1)
+                            String[] assignments = sb.toString().trim().split(",");
+                            for(String assign : assignments) 
                             {
-                                conditions[j] = command[i]+command[i+1]+command[i+2];
-                                i+=4;
-                                j++;
+                                if(!assign.trim().isEmpty()) 
+                                {
+                                    params.add(assign.trim());
+                                }
                             }
+                        
+                            if(i < command.length && command[i].equalsIgnoreCase("where")) 
+                            {
+                                i++;
+                            }
+                        
+                            while(i < command.length) 
+                            {
+                                String cond = command[i];
+                                if(cond.contains("=") || cond.contains("<") || cond.contains(">")) 
+                                {
+                                    conditions.add(cond.trim());
+                                    i++;
+                                } 
+                                else if(i + 2 < command.length) 
+                                {
+                                    conditions.add(command[i] + " " + command[i+1] + " " + command[i+2]);
+                                    i += 3;
+                                } 
+                                else 
+                                {
+                                    i++;
+                                }
+                            }
+                        
                             Class<?> tableClass = Class.forName("CustomDBMS."+DBName+"."+command[1]+"DB");
                             Object tableobj = tableClass.getMethod("RestoreBackup").invoke(null);
-                            if(tableobj == null)
+                        
+                            if(tableobj == null) 
                             {
                                 System.out.println("No records found (empty table).");
-                            }
-                            else
+                            } 
+                            else 
                             {
-                                tableClass.getMethod("UpdateSpecific",String.class,String.class).invoke(tableobj,params,conditions);
+                                tableClass.getMethod("UpdateSpecific", String[].class, String[].class)
+                                          .invoke(tableobj, params.toArray(new String[0]), conditions.toArray(new String[0]));
                                 tableClass.getMethod("TakeBackup").invoke(tableobj);
                             }
                         }
+
+
                         else if(command.length == 3 && command[0].equalsIgnoreCase("drop") && command[1].equalsIgnoreCase("table"))
                         {
                             String tableName = command[2];
