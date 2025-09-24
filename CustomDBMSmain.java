@@ -188,6 +188,11 @@ public class CustomDBMSmain
                             while(i < command.length) 
                             {
                                 String cond = command[i];
+                                if(command[i].equalsIgnoreCase("and") || command[i].equalsIgnoreCase("or")) 
+                                {
+                                    i++;
+                                    continue;
+                                }
                                 if(cond.contains("=") || cond.contains("<") || cond.contains(">")) 
                                 {
                                     conditions.add(cond.trim());
