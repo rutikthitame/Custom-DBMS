@@ -1,3 +1,33 @@
+/********************************************************************************************
+ * File: CustomDBMSmain.java
+ * Author: Rutik Thitame
+ * Date: 23-09-2025
+ * 
+ * Description:
+ *  This is the main driver class for the **MarvellousDBMS** project. It simulates 
+ *  a mini relational database management system with functionality such as:
+ *  
+ *   - Create Database
+ *   - Show Databases
+ *   - Use Database
+ *   - Create Table
+ *   - Insert Into Table
+ *   - Select (all or specific rows with conditions)
+ *   - Delete (specific rows with conditions)
+ *   - Update records (with conditions)
+ *   - Drop Table
+ *   - Drop Database
+ *   - Take Backup and Restore
+ *   - Display Help for supported commands
+ *   - Exit the system
+ * 
+ *  The program accepts SQL-like commands from the user, parses them, and 
+ *  performs the corresponding operations by dynamically generating 
+ *  Java classes for databases and tables.
+ * 
+ *  NOTE: This is a simplified DBMS for learning purposes.
+ ********************************************************************************************/
+
 import CustomDBMS.*;
 
 import java.util.*;
@@ -10,11 +40,8 @@ public class CustomDBMSmain
         Scanner sobj = new Scanner(System.in);
         DBHelper dbHelper;
 
-        int mainChoice = 0;
         String Choice= "";
         String command[] = null;
-        String colName = "";
-        String value = "";
 
         while(true)
         {
