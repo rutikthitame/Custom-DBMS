@@ -240,7 +240,16 @@ public class CustomDBMSmain
                         }
                         else if(command.length >= 1 && command[0].equalsIgnoreCase("help"))
                         {
-                            System.out.println("Available commands: insert, select, delete, back, help");
+                            System.out.println("Create new database : create database (DB name)");
+                            System.out.println("use database : use (DB name)");
+                            System.out.println("delete table : drop table (table name)");
+                            System.out.println("Insert new entry into DB : Insert into (table name)");
+                            System.out.println("Get DB : Select * from (table name)");
+                            System.out.println("Get by specific value : Select * from (table anme) where ___ = ___");
+                            System.out.println("Delete by specic value : delete from (table name) where ___ = ___");
+                            System.out.println("Switch to another DB : switch database");
+                            System.out.println("Go back to main menu :  back");
+                            System.out.println("To terminate the MarvellousDBMS :  exit");
                         }
                         else
                         {

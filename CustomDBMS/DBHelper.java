@@ -100,9 +100,13 @@ public class DBHelper
             if (Drr[0].equals("int")) 
             {
                 printStatement.append("        int ").append(Drr[1]).append(" = sobj.nextInt();\n");
-            } else if (Drr[0].equals("String")) 
+            } 
+            else if (Drr[0].equals("String")) 
             {
-                printStatement.append("        sobj.nextLine();\n");
+                if(i != 0)
+                {
+                    printStatement.append("        sobj.nextLine();\n");
+                }
                 printStatement.append("        String ").append(Drr[1]).append(" = sobj.nextLine();\n");
             }
         }
