@@ -1,4 +1,4 @@
-#  Custom DBMS (MarvellousDBMS)
+#  Custom DBMS
 
 A simple **custom-built Database Management System (DBMS)** implemented in **Java**.  
 It supports **basic SQL-like commands** such as creating databases and tables, inserting, selecting, updating, and deleting records — all stored in serialized files.  
